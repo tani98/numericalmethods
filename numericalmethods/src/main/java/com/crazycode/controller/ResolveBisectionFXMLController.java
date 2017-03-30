@@ -8,6 +8,8 @@ package com.crazycode.controller;
 import com.crazycode.util.Bisection;
 import com.crazycode.util.Dialog;
 import com.crazycode.util.Function;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -15,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 /**
@@ -25,63 +26,111 @@ import javafx.scene.control.TextField;
  */
 public class ResolveBisectionFXMLController implements Initializable {
 
-    Function function;
     Bisection bisection = new Bisection();
     Dialog dialog = new Dialog();
 
+    Function FunctionFx;
+    Function FunctionGx;
+    Function FunctionHx;
+
     XYChart.Series s1 = new XYChart.Series();
     XYChart.Series s2 = new XYChart.Series();
+
+    String fx;
+    String gx;
+    String hx;
 
     @FXML
     private TextField txtFx;
     @FXML
     private LineChart<?, ?> chart;
     @FXML
-    private Button btnCalculate;
+    private TextField txtGx;
+    @FXML
+    private TextField txtHx;
+    @FXML
+    private JFXButton btnCalculate;
+    @FXML
+    private JFXListView<String> listIteration;
+    @FXML
+    private JFXButton btnRepeat;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        btnCalculate.setDisable(true);
-        enableBtn();
+        btnRepeat.setVisible(false);
     }
 
     @FXML
     private void calculateFuntion(ActionEvent event) {
         try {
-            String fx = txtFx.getText();
-            function = new Function(fx);
-
-            if (function.isCorrect()) {
-                if (!s1.getData().isEmpty()) {
-                    s1.getData().clear();
-                }               
-
-                for (int i = 1; i < 10; i++) {
-                    s1.getData().add(new XYChart.Data(String.valueOf(i), function.eval(i)));
+            if (!isEmpty()) {
+                if (isCorrect()) {
+                    makeChart();
+                    bisection.setFuntion(fx);
+                    bisection.setError(0.005);
+                    bisection.setIterations(30);
+                    bisection.setRange(1, 2);
+                    bisection.solution();
+                    listIteration.setItems(bisection.getListSolution());
+                    btnCalculate.setDisable(true);
+                    btnRepeat.setVisible(true);
+                } else {
+                    dialog.ErrorDialog("Función mal escrita");
                 }
-                chart.getData().add(s1);
-                bisection.setError(0.005);
-                bisection.setIterations(20);
-                bisection.setRange(1, 2);
-                bisection.solution();
             } else {
-                dialog.ErrorDialog("Función mal escrita");
-                clean();
+                dialog.ErrorDialog("No puede dejar campos vacios");
+            }
+        } catch (Exception ex) {
+            System.err.println("Error " + ex.getMessage());
+        }
+
+    }
+
+    @FXML
+    private void repeat(ActionEvent event) {
+        clean();
+        btnCalculate.setDisable(false);
+        btnRepeat.setVisible(false);
+    }
+
+    private void makeChart() {
+        try {
+            for (int i = 1; i < 10; i++) {
+                s1.getData().add(new XYChart.Data(String.valueOf(i), FunctionGx.eval(i)));
+
+                s2.getData().add(new XYChart.Data(String.valueOf(i), FunctionHx.eval(i)));
             }
 
-        } catch (IllegalArgumentException ex) {
+            chart.getData().add(s1);
+            chart.getData().add(s2);
+
+        } catch (Exception ex) {
             System.err.println("Error " + ex.getMessage());
         }
     }
 
-    private void clean() {
-        chart.getData().clear();
-        txtFx.setText("");
+    private boolean isEmpty() {
+        return (txtFx.getText().isEmpty() || txtGx.getText().isEmpty() || txtHx.getText().isEmpty());
     }
 
-    private void enableBtn() {
-        txtFx.textProperty().addListener((observable, oldValue, newValue) -> {
-            btnCalculate.setDisable(newValue.trim().isEmpty());
-        });
+    private boolean isCorrect() {
+        fx = txtFx.getText();
+        gx = txtGx.getText();
+        hx = txtHx.getText();
+
+        FunctionFx = new Function(fx);
+        FunctionGx = new Function(gx);
+        FunctionHx = new Function(hx);
+
+        return (FunctionFx.isCorrect() || FunctionGx.isCorrect() || FunctionHx.isCorrect());
     }
+
+    private void clean() {
+        chart.getData().clear();
+        listIteration.getItems().clear();
+        txtFx.setText("");
+        txtGx.setText("");
+        txtHx.setText("");
+    }
+
 }

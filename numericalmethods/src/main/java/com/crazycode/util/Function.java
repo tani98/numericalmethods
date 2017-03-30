@@ -17,19 +17,15 @@ public class Function {
         j.addComplex();
         j.parseExpression(fx);
     }
-    
-
 
     public double eval(double x) {
-        double value;
         j.addVariable("x", x);       
-        value = j.getValue();
-        return value;
+        return j.getValue();
     }
     
     public boolean isCorrect(){
         return !j.hasError();
     }
-
+    
 
 }

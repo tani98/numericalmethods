@@ -1,5 +1,8 @@
 package com.crazycode.util;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Tani Aguirre
@@ -8,22 +11,25 @@ public class Bisection {
 
     public Bisection() {
     }
-    
+
     Function function;
 
     private double a;
     private double b;
     private int Iterations;
     private double error;
+    private String fx;
+    ObservableList<String> listSolution = FXCollections.observableArrayList();
 
     private double f(double x) {
+        function = new Function(fx);
         return function.eval(x);
     }
 
     /**
      * Solucion del Metodo de Biseccion
      */
-   public void solution() {
+    public void solution() {
 
         System.out.println("Intervalo : [" + a + ", " + b + "]");
         System.out.println("Error : " + error);
@@ -43,6 +49,7 @@ public class Bisection {
             c = (a + b) / 2;
 
             System.out.println("Iteracion (" + iteracion + ") : " + c);
+            listSolution.add("Iteracion (" + iteracion + ") : " + c);
             fa = f(a);
             fb = f(b);
             fc = f(c);
@@ -70,6 +77,15 @@ public class Bisection {
     }
 
     /**
+     * Función a ser evaluada
+     *
+     * @param fx
+     */
+    public void setFuntion(String fx) {
+        this.fx = fx;
+    }
+
+    /**
      * Definicion del intervalo
      *
      * @param a
@@ -91,6 +107,7 @@ public class Bisection {
 
     /**
      * Definicion del margen de error
+     *
      * @param error
      */
     public void setError(double error) {
@@ -99,10 +116,20 @@ public class Bisection {
 
     /**
      * Criterio de parada
+     *
+     * @param Pant
+     * @param Pact
      */
     private boolean StopTest(double Pant, double Pact) {
-        return Math.abs(Pant - Pact)  >= error ;
+        return Math.abs(Pant - Pact) >= error;
     }
     
-    
+    /**
+    *Para mostrar al usuario el número de iteraciones
+    * @return listSolution
+    */
+    public ObservableList<String> getListSolution() {
+        return listSolution;
+    }
+
 }
