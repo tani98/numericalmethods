@@ -1,4 +1,4 @@
-package com.crazycode.util;
+package com.developerfriend.util;
 
 import org.nfunk.jep.JEP;
 

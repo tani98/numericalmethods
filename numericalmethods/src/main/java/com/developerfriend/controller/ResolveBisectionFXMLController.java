@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.crazycode.controller;
+package com.developerfriend.controller;
 
-import com.crazycode.util.Bisection;
-import com.crazycode.util.Dialog;
-import com.crazycode.util.Function;
+import com.developerfriend.util.Bisection;
+import com.developerfriend.util.Dialog;
+import com.developerfriend.util.Function;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
